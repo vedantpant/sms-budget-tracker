@@ -1,0 +1,670 @@
+{
+    "CALIFORNIA BURRITO": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SUKU JAPANESE AND T": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "ACAI THEORY": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SHELL": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "OUTWARD REM NO": {
+        "type": "Savings",
+        "category": "Stock Portfolio"
+    },
+    "SWIGGY": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "rental payment": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "ZOMATO": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "CITY FOOD CENTRE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Amazon India": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "Doodle Collection P": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "VANSHIKA MITTAL": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "MOHAMMED RAFIQ A": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "KAVALRY TECHNOLOGIE": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "Blinkit": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "PEPPERCORN VENTURES": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "SOWBHAGYA AND CO": {
+        "type": "Expenses",
+        "category": "Clothing"
+    },
+    "Popeyes": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Madam Chocolate": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MUKTHIYAR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "WWC": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "S R A TRANSPORTS": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "1 MG mall Bangalore": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "BLISS CHOCOLATES IN": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "FOREST ESSENTIALS": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "ACH-CR-SAL-ENPHASESOLARENE": {
+        "type": "Income",
+        "category": "Employment(Net)"
+    },
+    "ACH-DR-Groww Pay Services": {
+        "type": "Savings",
+        "category": "Mutual Fund"
+    },
+    "BharatPe Merchant": {
+        "type": "Expenses",
+        "category": "Play Outside"
+    },
+    "Vendolite 4": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "K226 KFC HSR Layout": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "INDIQUBE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MOHAN  P": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "AVIGHNA ENTERPRISES": {
+        "type": "Expenses",
+        "category": "Fun & Vacation"
+    },
+    "Malabar Gold and Di": {
+        "type": "Income",
+        "category": "Side Hustle(Net)"
+    },
+    "CLOUDBERRY YOGURTOP": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SHYAMJIS CHOLE BHAT": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "HEMANTH KUMAR P": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Blink Commerce Priv": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "MUHAMMED AJEER K P": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Swiggy Limited": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Vinayaka Medical": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "BLINKIT COMMERCE PR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "CHANDA BAI": {
+        "type": "Expenses",
+        "category": "Cook Salary"
+    },
+    "RAMESH CHANDRA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DONER AND GYROS": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SHARAT SAINI": {
+        "type": "Expenses",
+        "category": "Media"
+    },
+    "HEISETASSE BEVERAGE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DOTPE": {
+        "type": "Expenses",
+        "category": "Subscription"
+    },
+    "MILANO ICE CREAM PR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "makemytrip": {
+        "type": "Expenses",
+        "category": "Fun & Vacation"
+    },
+    "ANTHE EATINGS PRIVA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Grand Fresh": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "S S Enterprises": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Mr GOVINDA RAJU": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "RAMSIYA VP": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Chaayos HMS": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DRINKPRIME": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "SONIYA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "PAX INNOVATION ICT": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "PERFECT SP BANGALOR": {
+        "type": "Expenses",
+        "category": "Play Outside"
+    },
+    "Tom and Jerky Priva": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Fitshit Health Solu": {
+        "type": "Expenses",
+        "category": "Play Outside"
+    },
+    "Licious": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Playo": {
+        "type": "Expenses",
+        "category": "Play Outside"
+    },
+    "SUBKO COFEE PVT LTD": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "District": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "NINE TECHNO SOLUTIO": {
+        "type": "Expenses",
+        "category": "Media"
+    },
+    "TOP IN TOWN SUPER M": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "SRINIDHI SAGAR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "CINEPOLIS": {
+        "type": "Expenses",
+        "category": "Fun & Vacation"
+    },
+    "NEXUS SHANTINIKETAN": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "KHEEMI DEVI": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "GOOD FLIPPIN BURGER": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "GROWW INVEST TECH P": {
+        "type": "Savings",
+        "category": "Stock Portfolio"
+    },
+    "INNOVENT SPACES PRI": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "NANDHANA PALACE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "EATALIOS CREAMERY L": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Vedant": {
+        "type": "Income",
+        "category": "Money Return"
+    },
+    "KOSKII": {
+        "type": "Expenses",
+        "category": "Clothing"
+    },
+    "SLV FLOWER SHOP": {
+        "type": "Expenses",
+        "category": "Fun & Vacation"
+    },
+    "SOCIETY MEN S LOUNG": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "Green park pan shop": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "R K KEY MAKER": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "Subway": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "TATA STARBUCKS PRIV": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Brikoven HSR Layout": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Chapter2drip": {
+        "type": "Expenses",
+        "category": "Clothing"
+    },
+    "BLUORNG RETAIL PRIV": {
+        "type": "Expenses",
+        "category": "Clothing"
+    },
+    "ZOMATO LIMITED": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "BASAVARAJ  .": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Shanti  Ayar": {
+        "type": "Expenses",
+        "category": "Cleaner Salary"
+    },
+    "BHAVAY CHAUDHARY": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "MUNCHMART TECHNOLOG": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SATYAJIT NAYAK": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "VendoliteIndia03": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Yogesh Kumar": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "NOBROKER TECHNOLOGI": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "Mr Ashish Kumar Sri": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "ARUN VARGHESE ABRAH": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MAHAMMAD ALI": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "PRACHI  PRAGYA": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "SWIGGY INSTAMART PR": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "PVR INOX Limited": {
+        "type": "Expenses",
+        "category": "Media"
+    },
+    "SREEJA S": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "TAMILSELVAN MURUGAN": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Jar Gold": {
+        "type": "Savings",
+        "category": "Stock Portfolio"
+    },
+    "Dragons Kitchen": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Diverse Retails Pvt": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Mrs. JAGADEESWARI G": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MEDILINE PHARMA": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "LOTUS MULTISPECIALI": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "Mrs KUMUTHA S": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "TEA BREW": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "VIMAYI MART": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "AJAY SHAH": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "DURGABATI LENKA": {
+        "type": "Expenses",
+        "category": "Fun & Vacation"
+    },
+    "the holy chinese fa": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MUBARAK": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "GREEN THEORY": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "ARGO SOLUTIONS INFO": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Emmar Fuel Park": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "MYOP NEXUS KORMANGA": {
+        "type": "Expenses",
+        "category": "Body Care & Medicine"
+    },
+    "K260 KFC Forum Mall": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MIDHLAJ P M": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MR HIMANSHU SINGH P": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MARSELI": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Dinesh Shree Shyam": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "INDIRAMANI SINGH": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Sri Venkateswara gl": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "MANJUNATHA  .": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "T  SUDHAKAR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "GFB - HSR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "AZAD  UDDIN": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "RAFID E K": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Ben Garrin Pigarez": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Yes Bank Partner Se": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "GLAMEO": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Bhartiya Jalpan-HSR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "POOJA MARKETING": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Sparkle Gold Retail": {
+        "type": "Savings",
+        "category": "Stock Portfolio"
+    },
+    "PARATHA WALLAH": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "RAHUL GOWTHAMAN": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DrinkPrime": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "IDC KITCHEN PRIVATE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "CHAAYOS": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Attibele Electronic": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "SAMAHITA FUELLING S": {
+        "type": "Expenses",
+        "category": "Transportation"
+    },
+    "INDIAN COFFEE WORKE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Nutberry Enterprise": {
+        "type": "Expenses",
+        "category": "Groceries"
+    },
+    "Miss SABEENA  MUMTA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SRI LAKSHMI VENKATE": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Decathlon": {
+        "type": "Expenses",
+        "category": "Play Outside"
+    },
+    "SREE GANESHA ENTERP": {
+        "type": "Expenses",
+        "category": "Utilities"
+    },
+    "BHANU PRATAP SINGH": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DAY MONTH YEAR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "R Shashikala": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "SRIVIDYA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "THY WINE CENTER": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Everstylish Lifesty": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Zomatofood": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "HIVEMIND CAFE AND S": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "VENDOLITE INDIA PRI": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "AAKAR VERMA": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "KSTDC MAYURA PINETO": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "ARAYIN D": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "P L A Y O": {
+        "type": "Expenses",
+        "category": "Housing"
+    },
+    "Mr Jayanthi Lal Cho": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    }
+}
