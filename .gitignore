@@ -1,5 +1,5 @@
-all_sms.json
+echo "all_sms.json
 all_sms_new.json
 *.xlsx
 __pycache__/
-*.pyc
+*.pyc" > .gitignore

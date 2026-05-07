@@ -666,5 +666,21 @@
     "Mr Jayanthi Lal Cho": {
         "type": "Expenses",
         "category": "Food Outside"
+    },
+    "DOMINOS": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DOMINOS PIZZA HSR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "BURGER KING HSR": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "DECATHLON SPORTS": {
+        "type": "Expenses",
+        "category": "Clothing"
     }
 }

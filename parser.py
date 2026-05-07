@@ -1,6 +1,7 @@
 import re
 import json
 from difflib import get_close_matches
+from ai_categorizer import categorize_merchant
 
 sms1 = """INR 645.00 debited
 A/c no. XX0316
@@ -35,7 +36,7 @@ CATEGORIES = {
     ]
 }
 
-def get_category(merchant):
+def get_category(merchant, amount=0):
     result = MERCHANT_CATEGORY_MAP.get(merchant, None)
     if result:
          return result
@@ -47,7 +48,10 @@ def get_category(merchant):
         print(f"Fuzzy match: '{merchant}' -> '{close[0]}'")
         return MERCHANT_CATEGORY_MAP[close[0]]
     
-    handle_unknown_merchant(merchant)
+    result = handle_unknown_merchant(merchant, amount)
+    if result:
+        MERCHANT_CATEGORY_MAP[merchant] = result
+        return result
     return MERCHANT_CATEGORY_MAP.get(merchant, None)
          
 
@@ -101,7 +105,7 @@ def process_sms(sms):
         print("Failed to parse SMS")
         return None
     
-    category_info = get_category(parsed["merchant_name"])
+    category_info = get_category(parsed["merchant_name"], float(parsed["amount"]))
 
     return {
         "amount": parsed["amount"],
@@ -119,7 +123,11 @@ with open("CATEGORY_MAP.json", "r") as f:
         MERCHANT_CATEGORY_MAP = json.load(f)
 
 
-def handle_unknown_merchant(merchant_name):
+def handle_unknown_merchant(merchant_name, amt=0):
+
+    result = categorize_merchant(merchant_name, amount=amt)
+    if result:
+        return result
     
     
     print(f"Unknown merchant: {merchant_name}. Please categorize this merchant.")
@@ -167,4 +175,4 @@ def handle_unknown_merchant(merchant_name):
 
 # print(parse_sms(sms3))
 
-print(process_sms(sms3))
+# print(process_sms(sms3))
