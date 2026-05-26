@@ -3,4 +3,6 @@ all_sms_new.json
 all_sms.json
 *.xlsx
 __pycache__/
-*.pyc" > .gitignore
+*.pyc" > .gitignore.env
+budget_tracker.log
+*.log
