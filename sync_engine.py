@@ -105,6 +105,9 @@ class SyncEngine:
                 except Exception as e:
                     log.error(f"Failed: {sms['id']} - {e}")
                     failed += 1
+                    self.db.client.table('sms_raw').update(
+                        {'status': 'failed'}
+                    ).eq('id', sms['id']).execute()
             log.info(f"Batch done: {success} processed, {failed} failed")
             return {'success': success, 'failed': failed}
     
