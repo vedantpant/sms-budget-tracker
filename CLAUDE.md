@@ -168,9 +168,13 @@ NEW: r'...(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})'  ← Optional c
 **Missing Transactions (NOW FIXED):**
 - ✅ June 2 → ₹57416.76 (format: "...at 02-06-26 11:47:06 IST\nRef: IMPS/P2A...") — **PARSER NOW HANDLES THIS**
 
-**Next Issues to Resolve:**
-- Issue 3: INDMoney → type='Savings', category='Stock Portfolio'
-- Issue 4: Suresh Krishana, KULANTHAIVELU PURUS → type='Expenses', category='Food Outside'
+**Issues Resolved:**
+- ✅ Issue 1: Credited SMS without 'on' keyword — Parser regex fixed + 100% test coverage
+- ✅ Issue 2: Missing June 2 transaction (₹57416.76) — Parser now handles this format
+- ✅ Issue 3: INDMoney → type='Savings', category='Stock Portfolio' (10 transactions fixed)
+- ✅ Issue 4: Suresh Krishana, KULANTHAIVELU PURUS → type='Expenses', category='Food Outside' (2 transactions fixed)
+
+**All Critical Issues RESOLVED! 🎉**
 
 ---
 
