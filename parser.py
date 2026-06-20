@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 import json
 from difflib import get_close_matches
@@ -77,14 +78,44 @@ def parse_sms(sms):
             "merchant_name": "OUTWARD REM"
         }
     
-    match = re.search(r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+on\s+(\d{2}-\d{2}-\d{2})\s+at\s+(\d{2}:\d{2}:\d{2})', sms)
+    # UPI Credit — "by Sender VPA xyz@upi on DD-MM-YY at HH:MM:SS"
+    match = re.search(
+        r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+by\s+(.+?)\s+VPA\s+\S+\s+on\s+(\d{2}-\d{2}-\d{2})\s+at\s+(\d{2}:\d{2}:\d{2})',
+        sms)
+    if match:
+        return {
+            "amount": match.group(1).replace(",", ""),
+            "account_number": match.group(2),
+            "merchant_name": match.group(3).strip(),
+            "timestamp": f"{match.group(4)}, {match.group(5)}",
+            "transaction_id": "",
+        }
+
+    # ACH/Salary Credit — "at DD-MM-YY at HH:MM:SS by ACH-CR-..."
+    match = re.search(
+        r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+(?:on\s+)?(?:at\s+)?(\d{2}-\d{2}-\d{2})\s+at\s+(\d{2}:\d{2}:\d{2})\s+by\s+(ACH-CR-\S+)',
+        sms)
     if match:
         return {
             "amount": match.group(1).replace(",", ""),
             "account_number": match.group(2),
             "timestamp": f"{match.group(3)}, {match.group(4)}",
             "transaction_id": "",
-            "merchant_name": "ACH-CR-SAL-ENPHASESOLARENE"
+            "merchant_name": match.group(5).strip(),
+        }
+
+    # Generic Credit fallback — no merchant extractable
+    match = re.search(
+    r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+(?:on\s+)?(?:at\s+)?(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})',
+    sms)
+
+    if match:
+        return {
+            "amount": match.group(1).replace(",", ""),
+            "account_number": match.group(2),
+            "timestamp": f"{match.group(3)}, {match.group(4)}",
+            "transaction_id": "",
+            "merchant_name": "CREDIT-UNKNOWN",
         }
     
     match = re.search(r'Debit\s+INR\s+([\d,]+\.?\d*)\s+Axis\s+Bank\s+A/c\s+XX(\d+)\s+(\d{2}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+ACH-DR-(.+?)[\n\r]',sms)
@@ -95,6 +126,56 @@ def parse_sms(sms):
             "timestamp": f"{match.group(3)}, {match.group(4)}",
             "transaction_id": "",
             "merchant_name": "ACH-DR-Groww Pay Services"
+        }
+    
+    match = re.search(
+    r'NACH debit towards (.+?) for INR ([\d,]+\.?\d*)\s+with UMRN',
+    sms)
+
+    if match:
+        merchant = match.group(1).strip()
+        amount = match.group(2).replace(",", "")
+        timestamp = datetime.now().strftime("%d-%m-%y, 00:00:00")
+        return {
+            "amount": amount,
+            "account_number": "0316",
+            "timestamp": timestamp,
+            "transaction_id": "",
+            "merchant_name": merchant
+        }
+    
+    # Google Play auto debit
+    match = re.search(
+        r'INR\s+([\d,]+\.?\d*)\s+for\s+(.+?)\s+will be auto debited',
+        sms
+    )
+    if match:
+        amount = match.group(1).replace(",", "")
+        merchant = match.group(2).strip()
+        timestamp = datetime.now().strftime("%d-%m-%y, 00:00:00")
+        return {
+            "amount": amount,
+            "account_number": "0316",
+            "timestamp": timestamp,
+            "transaction_id": "",
+            "merchant_name": merchant
+        }
+
+    # Auto Pay processed
+    match = re.search(
+        r'Auto Pay of INR\s+([\d,]+\.?\d*)\s+for\s+(.+?)\s+has been processed',
+        sms
+    )
+    if match:
+        amount = match.group(1).replace(",", "")
+        merchant = match.group(2).strip()
+        timestamp = datetime.now().strftime("%d-%m-%y, 00:00:00")
+        return {
+            "amount": amount,
+            "account_number": "0316",
+            "timestamp": timestamp,
+            "transaction_id": "",
+            "merchant_name": merchant
         }
 
     return None

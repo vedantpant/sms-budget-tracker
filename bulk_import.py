@@ -1,6 +1,7 @@
 import json
-from parser import process_sms
-from openpyxl_basic import add_bulk_to_excel
+from sync_engine import SyncEngine
+
+engine = SyncEngine()
 
 with open("all_sms.json", "r", encoding="utf-8") as f:
     all_sms = json.load(f)
@@ -8,13 +9,21 @@ with open("all_sms.json", "r", encoding="utf-8") as f:
 axis_sms = [sms for sms in all_sms if "AXISBK" in sms["address"]]
 print(f"Total Axis SMS: {len(axis_sms)}")
 
-transactions = []
-for sms in axis_sms:
-    transaction = process_sms(sms["body"])
-    if transaction:
-        transactions.append(transaction)
-    else:
-        print(f"Skipped: {sms['body'][:50]}")
+success, skipped, failed = 0, 0, 0
 
-print(f"\nParsed {len(transactions)} transactions — adding to Excel...")
-add_bulk_to_excel(transactions)
+for sms in axis_sms:
+    try:
+        result = engine.process_sms(sms["body"], sms_id=None)
+        if result:
+            success += 1
+            print(f"✅ {result['merchant_name']} ₹{result['amount']}")
+        else:
+            skipped += 1
+    except Exception as e:
+        if "Duplicate" in str(e):
+            skipped += 1
+        else:
+            print(f"❌ Failed: {e}")
+            failed += 1
+
+print(f"\nDone! ✅{success} added, ⏭️{skipped} skipped, ❌{failed} failed")

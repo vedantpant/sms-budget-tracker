@@ -30,6 +30,8 @@ def get_existing_transactions(ws):
 
 def add_bulk_to_excel(transactions):
     excel = Dispatch("Excel.Application")
+    excel.Visible = False
+    excel.DisplayAlerts = False
     wb = excel.Workbooks.Open(FILE_PATH)
     ws = wb.Sheets("Budget Tracking")
 
@@ -110,8 +112,17 @@ def add_bulk_to_excel(transactions):
     print(f"\nDone! Added: {added}, Skipped: {skipped}")
 
 
-def add_to_excel(transaction):
-    add_bulk_to_excel([transaction])
+def add_to_excel(transaction, retries=3, delay=3):
+    for attempt in range(retries):
+        try:
+            add_bulk_to_excel([transaction])
+            return
+        except Exception as e:
+            if attempt < retries - 1:
+                print(f"Excel busy, retry {attempt + 1}/{retries} ...")
+                time.sleep(delay)
+            else:
+                raise e
 
 
 if __name__ == "__main__":

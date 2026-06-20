@@ -682,5 +682,13 @@
     "DECATHLON SPORTS": {
         "type": "Expenses",
         "category": "Clothing"
+    },
+    "IMTHYAZ  .": {
+        "type": "Expenses",
+        "category": "Food Outside"
+    },
+    "Jio Prepaid Recharg": {
+        "type": "Expenses",
+        "category": "Subscription"
     }
 }

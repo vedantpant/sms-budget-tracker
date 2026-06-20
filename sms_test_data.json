@@ -1,0 +1,239 @@
+{
+  "metadata": {
+    "description": "All unique AXISBK SMS formats found in all_sms.json",
+    "total_axisbk_sms": 324,
+    "extracted_at": "2026-06-20",
+    "note": "Use this to test parser patterns. Each format should match its expected_pattern."
+  },
+
+  "upi_debit": {
+    "count": 256,
+    "pattern_name": "upi_debit",
+    "description": "Standard UPI debit - most common format",
+    "examples": [
+      {
+        "id": "upi_001",
+        "sms": "INR 50.00 debited\nA/c no. XX0316\n19-03-26, 17:23:11\nUPI/P2M/873443770786/NEXUS SHANTINIKETAN\nNot you? SMS BLOCKUPI Cust ID to 919951860002\nAxis Bank ",
+        "should_extract": {
+          "amount": "50.00",
+          "account": "0316",
+          "date": "19-03-26",
+          "time": "17:23:11",
+          "merchant": "NEXUS SHANTINIKETAN",
+          "transaction_id": "873443770786"
+        }
+      },
+      {
+        "id": "upi_002",
+        "sms": "INR 6792.00 debited\nA/c no. XX0316\n19-03-26, 18:26:26\nUPI/P2M/607856238242/Blinkit\nNot you? SMS BLOCKUPI Cust ID to 919951860002\nAxis Bank ",
+        "should_extract": {
+          "amount": "6792.00",
+          "account": "0316",
+          "date": "19-03-26",
+          "time": "18:26:26",
+          "merchant": "Blinkit",
+          "transaction_id": "607856238242"
+        }
+      }
+    ]
+  },
+
+  "outward_rem": {
+    "count": 7,
+    "pattern_name": "outward_rem",
+    "description": "Outward remittance - bank transfer",
+    "examples": [
+      {
+        "id": "outward_001",
+        "sms": "Debit INR 9952.92\nAxis Bank A/c XX0316\n23-03-26 17:17:00\nOUTWARD REM NO. 0741RI2608\nWhatsApp BAL to 917036165000\nNot You? SMS BLOCKALL CustID to 919951860002",
+        "should_extract": {
+          "amount": "9952.92",
+          "account": "0316",
+          "date": "23-03-26",
+          "time": "17:17:00",
+          "merchant": "OUTWARD REM"
+        }
+      },
+      {
+        "id": "outward_002",
+        "sms": "Debit INR 19904.58\nAxis Bank A/c XX0316\n20-04-26 10:05:31\nOUTWARD REM NO. 0741RI2611\nWhatsApp BAL to 917036165000\nNot You? SMS BLOCKALL CustID to 919951860002",
+        "should_extract": {
+          "amount": "19904.58",
+          "account": "0316",
+          "date": "20-04-26",
+          "time": "10:05:31",
+          "merchant": "OUTWARD REM"
+        }
+      }
+    ]
+  },
+
+  "credit_with_on": {
+    "count": 4,
+    "pattern_name": "credit_with_on",
+    "description": "Credit transaction with 'on' keyword before date",
+    "examples": [
+      {
+        "id": "credit_on_001",
+        "sms": "INR 174445.00 credited to A/c no. XX0316 on 30-03-26 at 12:24:19 IST. Info - ACH-CR-SAL-ENPHASESOLARENE. Chk Bal https://ccm.axis.bank.in/AXISBK/ltt3Dvko - Axis Bank",
+        "should_extract": {
+          "amount": "174445.00",
+          "account": "0316",
+          "date": "30-03-26",
+          "time": "12:24:19",
+          "merchant_extracted": "ACH-CR-SAL-ENPHASESOLARENE",
+          "note": "Salary credit"
+        }
+      },
+      {
+        "id": "credit_on_002",
+        "sms": "INR 154291.00 credited to A/c no. XX0316 on 30-04-26 at 16:28:08 IST. Info - ACH-CR-SAL-ENPHASESOLARENE. Chk Bal https://ccm.axis.bank.in/AXISBK/ltt3Dvko - Axis Bank",
+        "should_extract": {
+          "amount": "154291.00",
+          "account": "0316",
+          "date": "30-04-26",
+          "time": "16:28:08",
+          "merchant_extracted": "ACH-CR-SAL-ENPHASESOLARENE",
+          "note": "Salary credit"
+        }
+      }
+    ]
+  },
+
+  "credit_without_on": {
+    "count": 1,
+    "pattern_name": "credit_without_on",
+    "description": "Credit transaction WITHOUT 'on' keyword - PROBLEM FORMAT!",
+    "note": "⚠️ This is the June 2 missing transaction - current parser doesn't handle this",
+    "examples": [
+      {
+        "id": "credit_no_on_001",
+        "sms": "INR 57416.76 credited to A/c no. XX0316 at 02-06-26 11:47:06 IST\nRef: IMPS/P2A/615311446249/GROWWINV\nFor any details, call 18001035577 - Axis Bank",
+        "issue": "No 'on' keyword, no comma between date and time, newline before Ref",
+        "should_extract": {
+          "amount": "57416.76",
+          "account": "0316",
+          "date": "02-06-26",
+          "time": "11:47:06",
+          "merchant_extracted": "GROWWINV",
+          "note": "P2A transfer from another account"
+        }
+      }
+    ]
+  },
+
+  "ach_debit": {
+    "count": 15,
+    "pattern_name": "ach_debit",
+    "description": "ACH debit - automated clearing house debit",
+    "examples": [
+      {
+        "id": "ach_debit_001",
+        "sms": "Debit INR 4500.00\nAxis Bank A/c XX0316\n01-04-26 08:16:03\nACH-DR-Groww Pay Services \nWhatsApp BAL to 917036165000\nNot You? SMS BLOCKALL CustID to 919951860002",
+        "should_extract": {
+          "amount": "4500.00",
+          "account": "0316",
+          "date": "01-04-26",
+          "time": "08:16:03",
+          "merchant": "Groww Pay Services"
+        }
+      },
+      {
+        "id": "ach_debit_002",
+        "sms": "Debit INR 3600.00\nAxis Bank A/c XX0316\n01-04-26 08:16:05\nACH-DR-Groww Pay Services \nWhatsApp BAL to 917036165000\nNot You? SMS BLOCKALL CustID to 919951860002",
+        "should_extract": {
+          "amount": "3600.00",
+          "account": "0316",
+          "date": "01-04-26",
+          "time": "08:16:05",
+          "merchant": "Groww Pay Services"
+        }
+      }
+    ]
+  },
+
+  "nach_debit": {
+    "count": 15,
+    "pattern_name": "nach_debit",
+    "description": "NACH debit - mostly SIPs (Systematic Investment Plans)",
+    "examples": [
+      {
+        "id": "nach_001",
+        "sms": "NACH debit towards Groww Pay Services P for INR 2,700.00 with UMRN UTIB7022402220010690 has been successfully processed in A/c no. XX0316 today - Axis Bank",
+        "should_extract": {
+          "amount": "2700.00",
+          "account": "0316",
+          "merchant": "Groww Pay Services P",
+          "note": "SIP debit"
+        }
+      }
+    ]
+  },
+
+  "google_play": {
+    "count": 12,
+    "pattern_name": "google_play",
+    "description": "Google Play AutoPay - auto debit notifications and processed messages",
+    "examples": [
+      {
+        "id": "gplay_001",
+        "sms": "INR 130.00 for Google Play will be auto debited via Axis Bank Credit Card no. XX5380 by 10-04-26. Please maintain sufficient limit on the card to process the auto debit. To deactivate AutoPay facility for ID XMzyoTfIQu, click https://ccm.axis.bank.in/AXISBK/NKIx9UvH. TnC apply.",
+        "type": "advance_notification",
+        "should_extract": {
+          "amount": "130.00",
+          "merchant": "Google Play"
+        }
+      },
+      {
+        "id": "gplay_002",
+        "sms": "INR 1999.00 for Google Play will be auto debited via Axis Bank Credit Card no. XX5380 by 10-04-26. Please maintain sufficient limit on the card to process the auto debit. To deactivate AutoPay facility for ID YKtrYj9LXK, click https://ccm.axis.bank.in/AXISBK/NONr2TAE. TnC apply.",
+        "type": "advance_notification",
+        "should_extract": {
+          "amount": "1999.00",
+          "merchant": "Google Play"
+        }
+      }
+    ]
+  },
+
+  "other": {
+    "count": 14,
+    "pattern_name": "ignore_other",
+    "description": "OTPs, feedback surveys, etc. - NOT FINANCIAL TRANSACTIONS",
+    "note": "These should be IGNORED by parser",
+    "examples": [
+      {
+        "id": "other_001",
+        "sms": "191593 is the OTP for authentication on the Axis Bank Outward Remittance platform. Valid for 5 mins. Please do not share it with anyone.",
+        "type": "otp",
+        "action": "IGNORE",
+        "should_extract": null,
+        "note": "Not a financial transaction - correctly returns None"
+      },
+      {
+        "id": "other_002",
+        "sms": "Axis Bank is open to hear your feedback on your recent remittance transaction. Click https://ccm.axis.bank.in/AXISBK/ndb49rvQ to start the short survey.",
+        "type": "feedback",
+        "action": "IGNORE",
+        "should_extract": null,
+        "note": "Not a financial transaction - correctly returns None"
+      }
+    ]
+  },
+
+  "summary": {
+    "total_axisbk": 324,
+    "patterns_to_match": ["upi_debit", "outward_rem", "credit_with_on", "credit_without_on", "ach_debit", "nach_debit", "google_play"],
+    "patterns_to_ignore": ["other"],
+    "coverage_needed": "7 patterns for 310 SMS (ignoring 14 other)",
+    "critical_issues": [
+      {
+        "issue": "credit_without_on NOT handled",
+        "sms_count": 1,
+        "example_amount": "57416.76",
+        "example_date": "02-06-26",
+        "impact": "Missing June 2 transaction in Supabase"
+      }
+    ]
+  }
+}

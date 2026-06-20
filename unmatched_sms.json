@@ -1,0 +1,14 @@
+[
+  {
+    "id": "other_001",
+    "format": "other",
+    "sms": "191593 is the OTP for authentication on the Axis Bank Outward Remittance platform. Valid for 5 mins. Please do not share it with anyone.",
+    "error": "Parser returned None"
+  },
+  {
+    "id": "other_002",
+    "format": "other",
+    "sms": "Axis Bank is open to hear your feedback on your recent remittance transaction. Click https://ccm.axis.bank.in/AXISBK/ndb49rvQ to start the short survey.",
+    "error": "Parser returned None"
+  }
+]
