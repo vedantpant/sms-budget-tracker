@@ -7,7 +7,7 @@ from ai_categorizer import ask_ollama
 from datetime import datetime
 from openpyxl_basic import add_to_excel
 from config import Config
-from datetime import datetime
+from email_alerts import send_transaction_alert, send_error_alert
 
 
 class SyncEngine:
@@ -78,8 +78,17 @@ class SyncEngine:
             self.db.client.table('sms_raw').update(
                 {'status': 'processed'}
             ).eq('id', sms_id).execute()
-        
+
         log.info(f"✓ Processed: {parsed['merchant_name']} ₹{parsed['amount']}")
+
+        # Send email alert for successful transaction
+        send_transaction_alert(
+            merchant_name=transaction['merchant_name'],
+            amount=transaction['amount'],
+            category=transaction['category'],
+            transaction_type=transaction['type']
+        )
+
         return transaction
     
 
@@ -108,6 +117,13 @@ class SyncEngine:
                     self.db.client.table('sms_raw').update(
                         {'status': 'failed'}
                     ).eq('id', sms['id']).execute()
+
+                    # Send error alert
+                    send_error_alert(
+                        error_type=type(e).__name__,
+                        error_message=str(e),
+                        sms_id=sms['id']
+                    )
             log.info(f"Batch done: {success} processed, {failed} failed")
             return {'success': success, 'failed': failed}
     

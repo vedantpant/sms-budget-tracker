@@ -2,6 +2,7 @@ from sync_engine import SyncEngine
 import time
 from logger import log
 import signal
+from email_alerts import send_transaction_alert, send_error_alert
 
 class Listener:
 
