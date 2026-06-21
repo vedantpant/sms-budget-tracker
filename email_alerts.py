@@ -81,7 +81,7 @@ def send_daily_summary(total_expenses, total_income, transaction_count, top_cate
     """Send daily spending summary email"""
     try:
         subject = f"📊 Daily Budget Summary"
-        
+
         body = f"""
 Daily Spending Summary:
 
@@ -92,20 +92,104 @@ Top Category: {top_category}
 
 Your SMS Budget Tracker
         """
-        
+
         msg = MIMEMultipart()
         msg["From"] = GMAIL_EMAIL
         msg["To"] = ALERT_EMAIL
         msg["Subject"] = subject
         msg.attach(MIMEText(body, "plain"))
-        
+
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(GMAIL_EMAIL, GMAIL_PASSWORD)
             server.sendmail(GMAIL_EMAIL, ALERT_EMAIL, msg.as_string())
-        
+
         log.info(f"✅ Daily summary sent")
         return True
-        
+
     except Exception as e:
         log.error(f"❌ Daily summary failed: {e}")
+        return False
+
+
+def send_daily_report():
+    """Send formatted daily spending report"""
+    try:
+        from report_generator import ReportGenerator
+
+        generator = ReportGenerator()
+        report = generator.format_daily_report()
+
+        msg = MIMEMultipart("alternative")
+        msg["From"] = GMAIL_EMAIL
+        msg["To"] = ALERT_EMAIL
+        msg["Subject"] = report["subject"]
+
+        # Attach HTML report
+        msg.attach(MIMEText(report["html_body"], "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_EMAIL, GMAIL_PASSWORD)
+            server.sendmail(GMAIL_EMAIL, ALERT_EMAIL, msg.as_string())
+
+        log.info(f"✅ Daily report sent - ₹{report['total_spent']:,.2f}")
+        return True
+
+    except Exception as e:
+        log.error(f"❌ Daily report failed: {e}")
+        return False
+
+
+def send_weekly_report():
+    """Send formatted weekly spending report"""
+    try:
+        from report_generator import ReportGenerator
+
+        generator = ReportGenerator()
+        report = generator.format_weekly_report()
+
+        msg = MIMEMultipart("alternative")
+        msg["From"] = GMAIL_EMAIL
+        msg["To"] = ALERT_EMAIL
+        msg["Subject"] = report["subject"]
+
+        # Attach HTML report
+        msg.attach(MIMEText(report["html_body"], "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_EMAIL, GMAIL_PASSWORD)
+            server.sendmail(GMAIL_EMAIL, ALERT_EMAIL, msg.as_string())
+
+        log.info(f"✅ Weekly report sent - ₹{report['total_spent']:,.2f}")
+        return True
+
+    except Exception as e:
+        log.error(f"❌ Weekly report failed: {e}")
+        return False
+
+
+def send_monthly_report():
+    """Send formatted monthly spending report"""
+    try:
+        from report_generator import ReportGenerator
+
+        generator = ReportGenerator()
+        report = generator.format_monthly_report()
+
+        msg = MIMEMultipart("alternative")
+        msg["From"] = GMAIL_EMAIL
+        msg["To"] = ALERT_EMAIL
+        msg["Subject"] = report["subject"]
+
+        # Attach HTML report
+        msg.attach(MIMEText(report["html_body"], "html"))
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(GMAIL_EMAIL, GMAIL_PASSWORD)
+            server.sendmail(GMAIL_EMAIL, ALERT_EMAIL, msg.as_string())
+
+        log.info(f"✅ Monthly report sent - ₹{report['total_spent']:,.2f}")
+        return True
+
+    except Exception as e:
+        log.error(f"❌ Monthly report failed: {e}")
         return False
