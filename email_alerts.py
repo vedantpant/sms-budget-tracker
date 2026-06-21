@@ -112,12 +112,12 @@ Your SMS Budget Tracker
 
 
 def send_daily_report():
-    """Send formatted daily spending report"""
+    """Send formatted daily spending report with charts and visualizations"""
     try:
-        from report_generator import ReportGenerator
+        from report_generator_enhanced import EnhancedReportGenerator
 
-        generator = ReportGenerator()
-        report = generator.format_daily_report()
+        generator = EnhancedReportGenerator()
+        report = generator.format_daily_report_enhanced()
 
         msg = MIMEMultipart("alternative")
         msg["From"] = GMAIL_EMAIL
@@ -140,12 +140,12 @@ def send_daily_report():
 
 
 def send_weekly_report():
-    """Send formatted weekly spending report"""
+    """Send formatted weekly spending report with charts and visualizations"""
     try:
-        from report_generator import ReportGenerator
+        from report_generator_enhanced import EnhancedReportGenerator
 
-        generator = ReportGenerator()
-        report = generator.format_weekly_report()
+        generator = EnhancedReportGenerator()
+        report = generator.format_weekly_report_enhanced()
 
         msg = MIMEMultipart("alternative")
         msg["From"] = GMAIL_EMAIL
@@ -168,12 +168,12 @@ def send_weekly_report():
 
 
 def send_monthly_report():
-    """Send formatted monthly spending report"""
+    """Send formatted monthly spending report with charts and visualizations"""
     try:
-        from report_generator import ReportGenerator
+        from report_generator_enhanced import EnhancedReportGenerator
 
-        generator = ReportGenerator()
-        report = generator.format_monthly_report()
+        generator = EnhancedReportGenerator()
+        report = generator.format_monthly_report_enhanced()
 
         msg = MIMEMultipart("alternative")
         msg["From"] = GMAIL_EMAIL
