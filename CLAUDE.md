@@ -324,6 +324,43 @@ NEW: r'...(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})'  ← Optional c
 ✅ Proper mocking prevents test side effects
 ✅ All tests passing guarantees quality
 
+### Phase 8 — Daily/Weekly/Monthly Reports ✅ COMPLETED
+
+**FEATURE: Automated Expenditure Reports**
+
+**Components Built:**
+- ✅ `report_generator.py` — Query and format reports
+- ✅ `email_alerts.py` (expanded) — Send reports via email
+- ✅ `listener.py` (updated) — Scheduling logic
+- ✅ `tests/test_reports.py` — 18 comprehensive tests
+
+**Report Features:**
+- ✅ Daily reports at **11:00 PM** every day
+- ✅ Weekly reports every **Sunday at 6:00 PM**
+- ✅ Monthly reports on **1st at 6:00 PM**
+- ✅ Comparison with previous period (% change)
+- ✅ Top 5 merchants by spending
+- ✅ Category breakdown with percentages
+- ✅ Beautiful HTML email formatting
+
+**Report Contents:**
+- 💰 Total spending amount
+- 📊 Transaction count
+- 📈 Comparison metrics (vs last week/month)
+- 📌 Top merchants list
+- 🏷️ Category breakdown
+- ✅ No duplicate sends per period
+
+**Test Results:**
+- ✅ 18/18 report tests passing (100%)
+- ✅ Transaction fetching tests
+- ✅ Calculation accuracy tests
+- ✅ Report formatting tests
+- ✅ Email sending tests
+- ✅ HTML structure validation
+
+---
+
 ### Phase 9 — CI/CD + Polish ⬜
 - GitHub Actions
 - README.md
