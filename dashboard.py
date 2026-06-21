@@ -81,6 +81,25 @@ def get_failed_sms():
     except:
         return []
 
+@st.cache_data(ttl=30)
+def get_uncategorized_transactions():
+    """Get transactions with 'Uncategorized' category"""
+    try:
+        response = supabase.table("transactions").select("*").eq("category", "Uncategorized").order("timestamp", desc=True).limit(10).execute()
+        return response.data or []
+    except:
+        return []
+
+@st.cache_data(ttl=60)
+def get_all_categories():
+    """Get unique list of valid categories from category_map"""
+    try:
+        response = supabase.table("category_map").select("category").execute()
+        categories = sorted(set(item['category'] for item in response.data if item['category']))
+        return categories
+    except:
+        return []
+
 health_col1, health_col2, health_col3, health_col4 = st.columns(4)
 
 # Get health data
@@ -189,6 +208,47 @@ if failed_sms:
                     st.error(f"❌ Error retrying SMS: {e}")
 else:
     st.success("✅ No failed SMS! All messages processed successfully.")
+
+st.divider()
+
+# Manual Categorize UI - Fix Uncategorized Transactions
+st.subheader("📋 Manual Categorization")
+
+uncategorized = get_uncategorized_transactions()
+all_categories = get_all_categories()
+
+if uncategorized:
+    st.info(f"⚠️ {len(uncategorized)} transactions need categorization")
+
+    for i, txn in enumerate(uncategorized):
+        with st.expander(f"💳 {txn['merchant_name']} — ₹{txn['amount']} ({txn['timestamp'][:10]})"):
+            col1, col2 = st.columns(2)
+
+            with col1:
+                st.write(f"**Merchant:** {txn['merchant_name']}")
+                st.write(f"**Amount:** ₹{txn['amount']}")
+                st.write(f"**Type:** {txn['type']}")
+                st.write(f"**Date:** {txn['timestamp'][:10]}")
+
+            with col2:
+                st.write(f"**Current Category:** {txn['category']}")
+                st.write(f"**Transaction ID:** {txn['id']}")
+
+                new_category = st.selectbox(
+                    "Select correct category:",
+                    all_categories,
+                    key=f"cat_{txn['id']}"
+                )
+
+                if st.button(f"✅ Save Category", key=f"save_{txn['id']}"):
+                    try:
+                        supabase.table("transactions").update({"category": new_category}).eq("id", txn['id']).execute()
+                        st.success(f"✅ Updated {txn['merchant_name']} → {new_category}")
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"❌ Error saving: {e}")
+else:
+    st.success("✅ All transactions are categorized! No work needed.")
 
 st.divider()
 
