@@ -130,7 +130,7 @@ sms_raw status → 'processed'
 
 ## 🔄 CURRENT STATUS
 
-### Phase 5 — Dashboard (Streamlit) 🟡 IN PROGRESS
+### Phase 5 — Dashboard (Streamlit) ✅ COMPLETED
 
 **Part 1 — Data source refactor ✅ COMPLETED**
 - Migrated from Excel-based dashboard to Supabase-first architecture
@@ -151,10 +151,34 @@ sms_raw status → 'processed'
 - Tested and working — dashboard shows all metrics correctly
 - 625 transactions loaded from Supabase
 
-**Part 3 — Next: Error Queue Viewer + Manual Categorize UI**
-- Build expandable error queue showing unprocessed SMS
-- Add UI to manually categorize 'Uncategorized' transactions
-- Save corrections back to Supabase
+**Part 3 — Error Queue Viewer ✅ COMPLETED**
+- Fetches failed SMS from sms_raw table (status='failed')
+- Displays up to 5 failed SMS in expandable cards
+- Shows full SMS body, error message, status, retry count, source
+- Retry button to re-queue SMS (changes status to 'new', increments retry_count)
+- Dashboard auto-refreshes on retry
+- Shows success message if no failed SMS exist
+
+**Part 4 — Manual Categorization UI ✅ COMPLETED**
+- Fetches uncategorized transactions from database
+- Displays up to 10 uncategorized transactions in expandable cards
+- Shows: merchant name, amount, type, date, transaction ID, current category
+- Dropdown to select correct category (pulls from category_map)
+- Save button to update transaction category in Supabase
+- Real-time confirmation and dashboard refresh on save
+- Shows success message if all transactions are categorized
+
+**Dashboard Features Summary:**
+- ✅ Real-time transaction data from Supabase (625 transactions)
+- ✅ System health monitoring (listener status, pending SMS, last sync, recent errors)
+- ✅ Error queue with retry capability
+- ✅ Manual categorization for uncategorized transactions
+- ✅ Category breakdown with visual progress bars
+- ✅ Top 5 merchants with transaction counts and averages
+- ✅ Expense distribution pie chart
+- ✅ Monthly expense trend bar chart
+- ✅ AI-powered insights (Ollama integration)
+- ✅ HTML report export with charts and tables
 
 ---
 
@@ -207,13 +231,6 @@ NEW: r'...(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})'  ← Optional c
 ---
 
 ## ⬜ REMAINING PHASES
-
-### Phase 5 — Dashboard (Streamlit) 🟡 IN PROGRESS
-- ✅ Part 1: Supabase data source (load_transactions)
-- ✅ Part 2: Health panel (listener status, pending SMS, last sync, recent errors)
-- ⬜ Part 3: Error queue viewer
-- ⬜ Part 4: Manual categorize UI for 'Uncategorized' transactions
-- ✅ Basic spending charts (already working — category breakdown, top merchants, expense distribution, monthly trend)
 
 ### Phase 6 — Telegram Alerts ⬜
 - Notify on transaction processed
