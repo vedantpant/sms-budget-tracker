@@ -57,21 +57,23 @@ def get_category(merchant, amount=0):
          
 
 def parse_sms(sms):
-    match = re.search(r'INR\s+(\d+\.\d{2})\s+debited\s+A/c\s+no\.\s+XX(\d+)\s+(\d{2}-\d{2}-\d{2}, \d{2}:\d{2}:\d{2})\s+UPI/P2[MA]/(\d+)/(.+)', sms)
+    # UPI Debit — robust pattern handles commas and alphanumeric transaction IDs
+    match = re.search(r'INR\s+([\d,]+\.?\d*)\s+debited\s+A/c\s+no\.\s+XX(\d+)\s+(\d{2}-\d{2}-\d{2}, \d{2}:\d{2}:\d{2})\s+UPI/P2[MA]/([A-Z0-9]+)/(.+)', sms)
 
     if match:
         return {
-            "amount": match.group(1),
+            "amount": match.group(1).replace(",", ""),
             "account_number": match.group(2),
             "timestamp": match.group(3),
             "transaction_id": match.group(4),
             "merchant_name": match.group(5)
         }
-    
-    match = re.search(r'Debit\sINR\s+(\d+\.\d{2})\s+Axis\s+Bank\s+A/c\s+XX(\d+)\s+(\d{2}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+(OUTWARD\s+REM\s+NO\.\s+\w+)', sms)
+
+    # OUTWARD REM — robust pattern handles commas in amounts
+    match = re.search(r'Debit\sINR\s+([\d,]+\.?\d*)\s+Axis\s+Bank\s+A/c\s+XX(\d+)\s+(\d{2}-\d{2}-\d{2})\s+(\d{2}:\d{2}:\d{2})\s+(OUTWARD\s+REM\s+NO\.\s+\w+)', sms)
     if match:
         return {
-            "amount": match.group(1),
+            "amount": match.group(1).replace(",", ""),
             "account_number": match.group(2),
             "timestamp": f"{match.group(3)}, {match.group(4)}",
             "transaction_id": "",
@@ -91,17 +93,22 @@ def parse_sms(sms):
             "transaction_id": "",
         }
 
-    # ACH/Salary Credit — "at DD-MM-YY at HH:MM:SS by ACH-CR-..."
+    # ACH/Salary Credit — matches both "by ACH-CR-..." and "Info - ACH-CR-..." (handles IST timezone)
     match = re.search(
-        r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+(?:on\s+)?(?:at\s+)?(\d{2}-\d{2}-\d{2})\s+at\s+(\d{2}:\d{2}:\d{2})\s+by\s+(ACH-CR-\S+)',
+        r'INR\s+([\d,]+\.?\d*)\s+credited\s+to\s+A/c\s+no\.\s+XX(\d+)\s+(?:on\s+)?(?:at\s+)?(\d{2}-\d{2}-\d{2})\s+at\s+(\d{2}:\d{2}:\d{2}).*?(?:by\s+|Info\s+-\s+)(ACH-CR-\S+)',
         sms)
     if match:
+        # Extract creditor name from ACH-CR-SAL-ENPHASESOLARENE → ENPHASESOLARENE
+        ach_code = match.group(5).strip()
+        parts = ach_code.split("-")
+        merchant_name = parts[-1] if len(parts) > 2 else ach_code
+
         return {
             "amount": match.group(1).replace(",", ""),
             "account_number": match.group(2),
             "timestamp": f"{match.group(3)}, {match.group(4)}",
             "transaction_id": "",
-            "merchant_name": match.group(5).strip(),
+            "merchant_name": merchant_name,
         }
 
     # Generic Credit fallback — no merchant extractable
