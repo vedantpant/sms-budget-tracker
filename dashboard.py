@@ -73,8 +73,13 @@ def get_recent_errors():
     except:
         return []
     
-# Health panel - system status at the top
-st.subheader("🔍 System Health")
+@st.cache_data(ttl=30)
+def get_failed_sms():
+    try:
+        response = supabase.table("sms_raw").select("*").eq("status", "failed").order("created_at", desc=True).limit(5).execute()
+        return response.data or []
+    except:
+        return []
 
 health_col1, health_col2, health_col3, health_col4 = st.columns(4)
 
@@ -148,6 +153,42 @@ col1.metric("Total Expenses", f"₹{total_exp:,.0f}")
 col2.metric("Total Income", f"₹{total_inc:,.0f}")
 col3.metric("Total Savings", f"₹{total_sav:,.0f}")
 col4.metric("Transactions", len(filtered))
+
+st.divider()
+
+# Error Queue Viewer - Failed SMS
+st.subheader("🚨 Failed SMS Queue")
+
+failed_sms = get_failed_sms()
+if failed_sms:
+    st.warning(f"⚠️ {len(failed_sms)} SMS failed to process")
+
+    for sms in failed_sms:
+        with st.expander(f"📱 {sms['sms_body'][:50]}... (ID: {sms['id']})"):
+            st.write("**Full SMS:**")
+            st.code(sms['sms_body'], language="text")
+
+            st.write("**Error Details:**")
+            col1, col2, col3 = st.columns(3)
+            col1.metric("Status", sms['status'])
+            col2.metric("Retries", sms['retry_count'])
+            col3.metric("Source", sms['source'] or "Unknown")
+
+            if sms['error_message']:
+                st.write("**Error Message:**")
+                st.code(sms['error_message'][:300], language="text")
+
+            st.caption(f"Failed at: {sms['created_at']}")
+
+            if st.button(f"🔄 Retry SMS {sms['id']}", key=f"retry_{sms['id']}"):
+                try:
+                    supabase.table("sms_raw").update({"status": "new", "retry_count": sms['retry_count'] + 1}).eq("id", sms['id']).execute()
+                    st.success(f"✅ SMS {sms['id']} queued for retry!")
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"❌ Error retrying SMS: {e}")
+else:
+    st.success("✅ No failed SMS! All messages processed successfully.")
 
 st.divider()
 
