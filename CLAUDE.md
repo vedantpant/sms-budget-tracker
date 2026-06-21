@@ -130,6 +130,34 @@ sms_raw status → 'processed'
 
 ## 🔄 CURRENT STATUS
 
+### Phase 5 — Dashboard (Streamlit) 🟡 IN PROGRESS
+
+**Part 1 — Data source refactor ✅ COMPLETED**
+- Migrated from Excel-based dashboard to Supabase-first architecture
+- Updated `load_transactions()` to read from Supabase transactions table
+- 60-second cache TTL for real-time updates
+- Error handling returns empty list on failure
+
+**Part 2 — Health Panel ✅ COMPLETED**
+- Added 3 health data loader functions (30s cache TTL):
+  - `get_listener_status()` — last processed SMS timestamp
+  - `get_pending_sms_count()` — SMS waiting to be processed
+  - `get_recent_errors()` — recent errors from error_log
+- System Health panel displays 4 metrics:
+  - Listener Status with color indicators (🟢 Just now / 🟡 Xh ago / 🔴 Never)
+  - Pending SMS count (counts sms_raw.status='new')
+  - Last Sync timestamp (HH:MM:SS format)
+  - Recent Errors with expandable error details
+- Tested and working — dashboard shows all metrics correctly
+- 625 transactions loaded from Supabase
+
+**Part 3 — Next: Error Queue Viewer + Manual Categorize UI**
+- Build expandable error queue showing unprocessed SMS
+- Add UI to manually categorize 'Uncategorized' transactions
+- Save corrections back to Supabase
+
+---
+
 ### Phase 4.5 — Parser Refactor (Layered + Learning) ✅ COMPLETED
 
 **Root Cause:** Multiple SMS formats exist (and will change). Rather than hardcode patterns, build a learning system.
@@ -180,12 +208,12 @@ NEW: r'...(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})'  ← Optional c
 
 ## ⬜ REMAINING PHASES
 
-### Phase 5 — Dashboard (Streamlit) ⬜
-- Health panel (listener status, last sync time)
-- Error queue viewer
-- Manual categorize UI for 'Uncategorized' transactions
-- Basic spending charts (monthly, category-wise)
-- Balance tracker
+### Phase 5 — Dashboard (Streamlit) 🟡 IN PROGRESS
+- ✅ Part 1: Supabase data source (load_transactions)
+- ✅ Part 2: Health panel (listener status, pending SMS, last sync, recent errors)
+- ⬜ Part 3: Error queue viewer
+- ⬜ Part 4: Manual categorize UI for 'Uncategorized' transactions
+- ✅ Basic spending charts (already working — category breakdown, top merchants, expense distribution, monthly trend)
 
 ### Phase 6 — Telegram Alerts ⬜
 - Notify on transaction processed
