@@ -1,30 +1,126 @@
 import streamlit as st
-import openpyxl
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
+from datetime import datetime,timedelta
+import pandas as pd
 from collections import defaultdict
 import plotly.express as px
+import requests
 
-st.divider()
+load_dotenv()
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 st.set_page_config(page_title="Budget Tracker", page_icon="💰", layout="wide")
 st.title("💰 SMS Budget Tracker Dashboard")
 
+@st.cache_resource
+def get_supabase_client():
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
+
+supabase = get_supabase_client()
+
 # Load data (same logic as summary_report.py)
-@st.cache_data
+@st.cache_data(ttl=60)
 def load_transactions():
-    wb = openpyxl.load_workbook("Ultimate Personal Budget Manager.xlsx", data_only=True)
-    ws = wb["Budget Tracking"]
-    transactions = []
-    for row in ws.iter_rows(min_row=8, max_row=ws.max_row, min_col=3, max_col=7, values_only=True):
-        date, type_, category, amount, merchant = row
-        if date and amount and isinstance(amount, (int, float)):
+    try:
+        response = supabase.table("transactions").select("*").execute()
+        transactions = []
+
+        for row in response.data:
             transactions.append({
-                "date": date,
-                "type": type_,
-                "category": category,
-                "amount": float(amount),
-                "merchant": merchant.split("|")[0].strip() if merchant else "Unknown"
+                "date": datetime.fromisoformat(row["timestamp"]),
+                "type": row["type"],
+                "category": row["category"],
+                "amount": float(row["amount"]),
+                "merchant": row["merchant_name"]
             })
-    return transactions
+
+        return transactions
+    except Exception as e:
+        st.error(f"Error loading transactions: {e}")
+        return []
+
+
+# Health panel data loaders
+@st.cache_data(ttl=30)
+def get_listener_status():
+    """Check listener health - last processed SMS timestamp"""
+    try:
+        response = supabase.table("sms_raw").select("processed_at").order("processed_at", desc=True).limit(1).execute()
+        if response.data:
+            return response.data[0]["processed_at"]
+        return None
+    except:
+        return None
+
+@st.cache_data(ttl=30)
+def get_pending_sms_count():
+    """Count SMS waiting to be processed"""
+    try:
+        response = supabase.table("sms_raw").select("id", count="exact").eq("status", "new").execute()
+        return response.count or 0
+    except:
+        return 0
+
+@st.cache_data(ttl=30)
+def get_recent_errors():
+    """Get recent errors from error_log"""
+    try:
+        response = supabase.table("error_log").select("*").order("created_at", desc=True).limit(5).execute()
+        return response.data or []
+    except:
+        return []
+    
+# Health panel - system status at the top
+st.subheader("🔍 System Health")
+
+health_col1, health_col2, health_col3, health_col4 = st.columns(4)
+
+# Get health data
+last_sync = get_listener_status()
+pending_count = get_pending_sms_count()
+recent_errors = get_recent_errors()
+
+# Format last sync time
+if last_sync:
+    last_sync_dt = datetime.fromisoformat(last_sync)
+    time_diff = datetime.now(last_sync_dt.tzinfo) - last_sync_dt if last_sync_dt.tzinfo else datetime.now() - last_sync_dt.replace(tzinfo=None)
+    minutes_ago = int(time_diff.total_seconds() / 60)
+    
+    if minutes_ago < 1:
+        status_text = "🟢 Just now"
+    elif minutes_ago < 60:
+        status_text = f"🟢 {minutes_ago}m ago"
+    else:
+        hours_ago = minutes_ago // 60
+        status_text = f"🟡 {hours_ago}h ago"
+else:
+    status_text = "🔴 Never"
+
+health_col1.metric("Listener Status", status_text)
+health_col2.metric("Pending SMS", pending_count)
+health_col3.metric("Last Sync", last_sync_dt.strftime("%H:%M:%S") if last_sync else "N/A")
+
+# Recent errors expander
+if recent_errors:
+    with health_col4:
+        st.metric("Recent Errors", len(recent_errors))
+else:
+    health_col4.metric("Recent Errors", "✅ None")
+
+# Show error details if any
+if recent_errors:
+    with st.expander("📋 Error Details"):
+        for i, error in enumerate(recent_errors[:5], 1):
+            st.write(f"**Error {i}:** {error['error_type']}")
+            st.caption(f"Component: {error['component']} | Time: {error['created_at']}")
+            if error['error_message']:
+                st.code(error['error_message'][:200], language="text")
+
+st.divider()
+
 
 transactions = load_transactions()
 st.sidebar.success(f"Loaded {len(transactions)} transactions")
@@ -119,7 +215,6 @@ st.divider()
 st.subheader("🤖 AI Insights")
 
 if st.button("Generate AI Insights", type="primary"):
-    import requests
     with st.spinner("Ollama se insights generate ho rahe hain..."):
         report_data = f"""
 Month: {selected_month}
