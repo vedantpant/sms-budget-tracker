@@ -41,10 +41,21 @@ app_tracker/
 ├── listener.py            ← Background polling service
 ├── bulk_import.py         ← One-time bulk SMS import from all_sms.json
 ├── fix_excel_missing.py   ← One-time fix for Excel missing transactions
-├── dashboard.py           ← Streamlit dashboard (Phase 5 — pending)
+├── dashboard.py           ← Streamlit dashboard (Phase 5)
 ├── smart_commit.py        ← AI commit messages via Ollama
-├── all_sms.json           ← Exported phone SMS (from Termux)
-├── CATEGORY_MAP.json      ← 201 merchants (backup — source of truth = Supabase)
+├── bank_reconciliation_csv.py   ← CSV-based bank reconciliation (Phase 8.5)
+├── bank_statement_parser.py     ← PDF parser for bank statements (Phase 8.5)
+├── test_reconciliation.py       ← Reconciliation testing guide
+├── report_generator.py          ← Report generation (Phase 8)
+├── report_generator_enhanced.py ← Enhanced reports with charts (Phase 8)
+├── email_alerts.py              ← Email alerts + reports (Phase 6 & 8)
+├── cloud_scheduler_handler.py   ← Cloud Scheduler Flask handler
+├── all_sms.json                 ← Exported phone SMS (from Termux)
+├── CATEGORY_MAP.json            ← 201 merchants (backup — source of truth = Supabase)
+├── SCHEDULING_GUIDE.md          ← 3-layer scheduling documentation
+├── SETUP_TASK_SCHEDULER.md      ← Windows Task Scheduler setup guide
+├── SETUP_CLOUD_SCHEDULER.md     ← Google Cloud Scheduler setup guide
+├── requirements.txt             ← Python dependencies
 └── Ultimate Personal Budget Manager.xlsx
 ```
 
@@ -361,11 +372,63 @@ NEW: r'...(\d{2}-\d{2}-\d{2}),?\s+(?:at\s+)?(\d{2}:\d{2}:\d{2})'  ← Optional c
 
 ---
 
+### Phase 8.5 — Bank Statement Reconciliation ✅ IN PROGRESS
+
+**Purpose:** Cross-verify all bank transactions with SMS records to catch missing transactions
+
+**Components:**
+- ✅ `bank_reconciliation_csv.py` — CSV-based reconciliation engine
+- ✅ `bank_statement_parser.py` — PDF/text extraction (extensible)
+- ✅ `test_reconciliation.py` — Testing & usage guide
+
+**How It Works:**
+```
+Bank Statement (CSV) 
+    ↓
+Parse transactions (Date, Amount, Merchant, Type)
+    ↓
+Compare with Supabase transactions table
+    ↓
+Identify missing ones
+    ↓
+Auto-categorize using sync_engine
+    ↓
+Add to Supabase + Excel
+    ↓
+✅ 100% reconciliation coverage
+```
+
+**Features:**
+- ✅ CSV import (copy/paste from PDF to Excel)
+- ✅ Smart merchant extraction (UPI, ACH, Outward REM patterns)
+- ✅ Debit/Credit type detection
+- ✅ Automatic categorization
+- ✅ Auto-sync to Supabase + Excel
+- ✅ Detailed reconciliation report
+
+**Usage:**
+```python
+from bank_reconciliation_csv import CSVBankReconciliation
+
+reconciler = CSVBankReconciliation()
+result = reconciler.reconcile_csv("bank_statement.csv")
+# Returns: {matched, missing, added, details}
+```
+
+**CSV Format Expected:**
+```
+Date | Transaction Details | Withdrawal | Deposits
+01-05-2026 | UPI/P2M/ZOMATO | 240.00 |
+02-05-2026 | ACH-CR-SALARY | | 174445.00
+```
+
+---
+
 ### Phase 9 — CI/CD + Polish ⬜
 - GitHub Actions
 - README.md
 - .env.example
-- Proper logging levels
+- Dashboard bank reconciliation UI
 - Error recovery improvements
 
 ---

@@ -61,9 +61,19 @@ class SupabaseClient:
 
             log.info(f"Category map loaded: {len(result)} merchants")
             return result
-        
+
         except Exception as e:
             raise SupabaseConnectionError(f"get_category_map failed: {e}")
+
+    def get_all_transactions(self):
+        """Fetch all transactions from Supabase"""
+        try:
+            response = self.client.table('transactions').select('*').execute()
+            log.info(f"Fetched {len(response.data)} transactions from Supabase")
+            return response.data
+        except Exception as e:
+            log.error(f"get_all_transactions failed: {e}")
+            return []
         
     def insert_transaction(self, data: dict):
         from exceptions import DuplicateTransactionError, SupabaseConnectionError
