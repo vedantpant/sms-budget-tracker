@@ -17,17 +17,19 @@ class CSVBankReconciliation:
         self.supabase = SupabaseClient()
         self.sync_engine = SyncEngine()
 
-    def reconcile_csv(self, csv_path: str) -> Dict:
+    def reconcile_csv(self, csv_path: str, quick_mode: bool = False) -> Dict:
         """
         Comprehensive reconciliation workflow:
         1. Parse bank CSV
         2. Get Supabase transactions
         3. Check for duplicates (same date + amount)
         4. Find truly missing transactions
-        5. Auto-add only new ones
+        5. Auto-add only new ones (skip AI if quick_mode=True)
         6. Return detailed report
+
+        quick_mode: If True, skip AI categorization for known merchants (faster)
         """
-        log.info(f"[Reconciliation] Starting reconciliation for {csv_path}")
+        log.info(f"[Reconciliation] Starting reconciliation for {csv_path} (quick_mode={quick_mode})")
 
         try:
             # Step 1: Parse CSV
@@ -52,7 +54,8 @@ class CSVBankReconciliation:
             if comparison['missing']:
                 added_count = self._add_missing_transactions(
                     comparison['missing'],
-                    supabase_txns
+                    supabase_txns,
+                    quick_mode=quick_mode
                 )
 
             # Step 5: Generate report
@@ -217,10 +220,13 @@ class CSVBankReconciliation:
         }
 
     def _add_missing_transactions(self, missing_txns: List[Dict],
-                                 supabase_txns: List[Dict]) -> int:
+                                 supabase_txns: List[Dict],
+                                 quick_mode: bool = False) -> int:
         """
         Add missing transactions to Supabase ONLY
         Skip Excel to avoid any duplication issues
+
+        quick_mode: If True, use only existing category mapping (skip AI)
         """
         added = 0
 
@@ -232,10 +238,19 @@ class CSVBankReconciliation:
                 tx_type = txn['type']
 
                 # Categorize
-                category = self.sync_engine.categorize(
-                    merchant=merchant,
-                    amount=amount
-                )
+                if quick_mode:
+                    # Quick mode: only use existing category map, skip Ollama AI
+                    if merchant in self.sync_engine.category_map:
+                        cat_info = self.sync_engine.category_map[merchant]
+                        category = cat_info.get('category', 'Uncategorized')
+                    else:
+                        category = 'Uncategorized'
+                else:
+                    # Full mode: use AI categorization
+                    category = self.sync_engine.categorize(
+                        merchant=merchant,
+                        amount=amount
+                    )
 
                 # Convert date
                 date_obj = datetime.strptime(date, "%d-%m-%y")

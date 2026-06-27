@@ -122,27 +122,74 @@ if mode == "Reconciliation":
         # Run reconciliation
         st.header("Step 3: Run Reconciliation")
 
-        if st.button("Start Reconciliation", key="reconcile_btn", type="primary"):
-            with st.spinner("Reconciling transactions..."):
-                try:
-                    # Save uploaded file temporarily
-                    temp_file = "temp_upload.csv"
-                    df.to_csv(temp_file, index=False)
+        col1, col2 = st.columns(2)
 
-                    # Run reconciliation
+        with col1:
+            quick_mode = st.checkbox(
+                "Quick Mode",
+                value=True,
+                help="Skip AI categorization for faster results (uses existing categories)"
+            )
+
+        with col2:
+            if st.button("Start Reconciliation", key="reconcile_btn", type="primary"):
+                # Save uploaded file temporarily
+                temp_file = "temp_upload.csv"
+                df.to_csv(temp_file, index=False)
+
+                # Progress tracking
+                progress_bar = st.progress(0)
+                status_text = st.empty()
+
+                try:
+                    status_text.info("Initializing reconciliation...")
+                    progress_bar.progress(10)
+
                     reconciler = CSVBankReconciliation()
-                    result = reconciler.reconcile_csv(temp_file)
+
+                    status_text.info("Parsing CSV transactions...")
+                    progress_bar.progress(20)
+
+                    status_text.info("Fetching Supabase transactions...")
+                    progress_bar.progress(40)
+
+                    status_text.info("Comparing transactions...")
+                    progress_bar.progress(60)
+
+                    if quick_mode:
+                        status_text.info("Quick mode: Skipping AI categorization...")
+                    else:
+                        status_text.info("Running AI categorization (this may take a while)...")
+
+                    progress_bar.progress(80)
+
+                    # Run reconciliation (with or without AI)
+                    result = reconciler.reconcile_csv(temp_file, quick_mode=quick_mode)
+
+                    progress_bar.progress(95)
+                    status_text.info("Finalizing results...")
 
                     st.session_state.reconciliation_done = True
                     st.session_state.reconciliation_result = result
 
+                    progress_bar.progress(100)
+
                     if result.get("status") == "success":
-                        st.success("Reconciliation completed successfully!")
+                        status_text.success("Reconciliation completed successfully!")
+
+                        # Show quick summary
+                        st.markdown("---")
+                        st.subheader("Quick Summary")
+                        col1, col2, col3 = st.columns(3)
+                        col1.metric("Missing Found", result.get('missing', 0))
+                        col2.metric("Added to Supabase", result.get('added', 0))
+                        col3.metric("Time Saved", "~1-2 min" if quick_mode else "~3-5 min")
+
                     else:
-                        st.error(f"Error: {result.get('error', 'Unknown error')}")
+                        status_text.error(f"Error: {result.get('error', 'Unknown error')}")
 
                 except Exception as e:
-                    st.error(f"Error during reconciliation: {str(e)}")
+                    status_text.error(f"Error during reconciliation: {str(e)}")
                     log.error(f"[Dashboard] Reconciliation error: {e}")
 
 elif mode == "Sync to Excel":
