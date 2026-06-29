@@ -12,6 +12,7 @@ from collections import defaultdict
 
 from supabase_client import SupabaseClient
 from sync_engine import SyncEngine
+from report_exporter import ReportExporter
 from logger import log
 
 # Page configuration
@@ -436,6 +437,104 @@ def show_reports():
             col2.metric("Total Spent", f"₹{total_spent:,.0f}")
             col3.metric("Remaining Budget", f"₹{BUDGET_CONFIG['total_budget'] - total_spent:,.0f}")
 
+def show_export():
+    """Show export and sharing options"""
+    st.header("📥 Export & Share Reports")
+
+    exporter = ReportExporter()
+
+    # Export type selection
+    export_type = st.radio("Choose Export Type:", ["CSV", "Email Report", "HTML Report"])
+
+    st.markdown("---")
+
+    if export_type == "CSV":
+        st.subheader("Export to CSV")
+
+        period = st.selectbox("Period:", ["Daily", "Weekly", "Monthly"])
+        period_lower = period.lower()
+
+        if st.button("Generate CSV", type="primary"):
+            with st.spinner("Generating CSV..."):
+                csv_data, message = exporter.export_to_csv(period_lower)
+
+                if csv_data:
+                    # Provide download button
+                    st.download_button(
+                        label="Download CSV",
+                        data=csv_data,
+                        file_name=f"report_{period_lower}_{datetime.now().strftime('%Y%m%d')}.csv",
+                        mime="text/csv",
+                        type="primary"
+                    )
+                    st.success(message)
+                else:
+                    st.error(message)
+
+    elif export_type == "Email Report":
+        st.subheader("Send Report via Email")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            recipient = st.text_input("Recipient Email:", placeholder="example@gmail.com")
+            period = st.selectbox("Period:", ["Daily", "Weekly", "Monthly"])
+
+        with col2:
+            include_csv = st.checkbox("Include CSV attachment", value=True)
+            send_now = st.button("Send Report", type="primary")
+
+        if send_now:
+            if recipient and "@" in recipient:
+                with st.spinner("Sending email..."):
+                    success, message = exporter.send_email_report(
+                        recipient,
+                        period.lower(),
+                        include_attachment=include_csv
+                    )
+
+                    if success:
+                        st.success(message)
+                    else:
+                        st.error(message)
+            else:
+                st.warning("Please enter a valid email address")
+
+    elif export_type == "HTML Report":
+        st.subheader("Export as HTML (for PDF conversion)")
+
+        period = st.selectbox("Period:", ["Daily", "Weekly", "Monthly"])
+
+        if st.button("Generate HTML Report", type="primary"):
+            with st.spinner("Generating HTML..."):
+                html, message = exporter.export_to_pdf_html(period.lower())
+
+                if html:
+                    # Provide download button
+                    st.download_button(
+                        label="Download HTML",
+                        data=html,
+                        file_name=f"report_{period.lower()}_{datetime.now().strftime('%Y%m%d')}.html",
+                        mime="text/html",
+                        type="primary"
+                    )
+                    st.success(message)
+                    st.info("💡 You can open this HTML file in your browser and print as PDF")
+                else:
+                    st.error(message)
+
+    st.markdown("---")
+    st.subheader("Scheduled Reports")
+
+    st.info("""
+    **Automatic Reports (via Task Scheduler):**
+    - ✅ Daily Report: 9 AM
+    - ✅ Weekly Report: Sunday 6 PM
+    - ✅ Monthly Report: 1st 6 PM
+
+    These reports are automatically sent to your configured email.
+    """)
+
 def show_manual_entry():
     """Show manual transaction entry form"""
     st.header("➕ Add Manual Transaction")
@@ -504,7 +603,8 @@ def main():
                 "Investments",
                 "AI Insights",
                 "Reports",
-                "Add Transaction"
+                "Add Transaction",
+                "Export & Share"
             ]
         )
 
@@ -536,6 +636,8 @@ def main():
         show_reports()
     elif page == "Add Transaction":
         show_manual_entry()
+    elif page == "Export & Share":
+        show_export()
 
     # Footer
     st.markdown("---")
