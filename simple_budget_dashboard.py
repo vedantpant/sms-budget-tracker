@@ -232,13 +232,14 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("📊 Income Distribution")
 
-    # Waterfall chart showing flow
-    fig_waterfall = go.Figure(go.Waterfall(
-        x=['Income', 'Expenses', 'Investments', 'Savings'],
-        y=[breakdown['income'], -breakdown['expenses'], -breakdown['investments'], breakdown['savings']],
-        marker=dict(color=['green', 'red', 'orange', 'blue']),
-        connector=dict(line=dict(color='gray'))
-    ))
+    # Bar chart showing comparison
+    categories = ['Income', 'Expenses', 'Investments', 'Savings']
+    amounts = [breakdown['income'], breakdown['expenses'], breakdown['investments'], breakdown['savings']]
+    colors = ['green', 'red', 'orange', 'blue']
+
+    fig_waterfall = go.Figure(data=[
+        go.Bar(x=categories, y=amounts, marker_color=colors, text=[f'₹{x:,.0f}' for x in amounts], textposition='auto')
+    ])
 
     fig_waterfall.update_layout(
         height=300,
