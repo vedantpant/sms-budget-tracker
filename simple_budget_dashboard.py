@@ -197,7 +197,72 @@ with col2:
 
 st.markdown("---")
 
-# Row 3: AI Suggestions
+# Row 5: Month-wise Category Breakdown
+st.subheader("📈 Month-wise Category Breakdown")
+
+all_txns = supabase.get_all_transactions()
+if all_txns:
+    df_all = pd.DataFrame(all_txns)
+    df_all['timestamp'] = pd.to_datetime(df_all['timestamp'])
+    df_all['month'] = df_all['timestamp'].dt.to_period('M').astype(str)
+
+    # Create pivot table: months vs categories
+    pivot_data = df_all.pivot_table(
+        values='amount',
+        index='month',
+        columns='category',
+        aggfunc='sum',
+        fill_value=0
+    )
+
+    if not pivot_data.empty:
+        # Stacked bar chart
+        fig_category = go.Figure()
+
+        colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#fee140']
+
+        for idx, category in enumerate(pivot_data.columns):
+            fig_category.add_trace(go.Bar(
+                x=pivot_data.index,
+                y=pivot_data[category],
+                name=category,
+                marker_color=colors[idx % len(colors)]
+            ))
+
+        fig_category.update_layout(
+            barmode='stack',
+            height=400,
+            xaxis_title='Month',
+            yaxis_title='Spending (₹)',
+            hovermode='x unified',
+            legend=dict(orientation='v', yanchor='top', y=0.99, xanchor='left', x=1.01)
+        )
+
+        st.plotly_chart(fig_category, use_container_width=True)
+
+        # Table view
+        st.subheader("💾 Category Breakdown Table")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.write("**Spending by Category per Month:**")
+            st.dataframe(
+                pivot_data.style.format('₹{:,.0f}'),
+                use_container_width=True
+            )
+
+        with col2:
+            st.write("**Top Categories Overall:**")
+            category_totals = df_all.groupby('category')['amount'].sum().sort_values(ascending=False)
+            for idx, (cat, amount) in enumerate(category_totals.head(8).items(), 1):
+                budget = BUDGET_CONFIG["categories"].get(cat, 0)
+                pct = (amount / budget * 100) if budget > 0 else 0
+                st.write(f"{idx}. **{cat}**: ₹{amount:,.0f} ({pct:.0f}% of budget)")
+
+st.markdown("---")
+
+# Row 6: AI Suggestions
 st.subheader("🤖 Smart Suggestions")
 
 suggestions = get_ai_suggestions(spending)
