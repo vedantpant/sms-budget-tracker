@@ -212,6 +212,66 @@ for suggestion in suggestions:
 
 st.markdown("---")
 
+# Row 3: Monthly Spending Trend
+st.subheader("📅 Monthly Spending Trend")
+
+# Get monthly data
+all_txns = supabase.get_all_transactions()
+if all_txns:
+    df_all = pd.DataFrame(all_txns)
+    df_all['timestamp'] = pd.to_datetime(df_all['timestamp'])
+    df_all['month'] = df_all['timestamp'].dt.to_period('M')
+
+    monthly_spending = df_all.groupby('month')['amount'].sum().reset_index()
+    monthly_spending['month'] = monthly_spending['month'].astype(str)
+
+    if not monthly_spending.empty:
+        # Create line chart
+        fig_monthly = go.Figure()
+
+        fig_monthly.add_trace(go.Scatter(
+            x=monthly_spending['month'],
+            y=monthly_spending['amount'],
+            mode='lines+markers',
+            name='Monthly Spending',
+            line=dict(color='#667eea', width=3),
+            marker=dict(size=8)
+        ))
+
+        # Add budget line
+        fig_monthly.add_hline(
+            y=BUDGET_CONFIG['total_budget'],
+            line_dash="dash",
+            line_color="red",
+            annotation_text="Budget",
+            annotation_position="right"
+        )
+
+        fig_monthly.update_layout(
+            height=300,
+            xaxis_title='Month',
+            yaxis_title='Spending (₹)',
+            hovermode='x unified',
+            showlegend=True
+        )
+
+        col1, col2 = st.columns([3, 1])
+
+        with col1:
+            st.plotly_chart(fig_monthly, use_container_width=True)
+
+        with col2:
+            st.subheader("Monthly Stats")
+            st.write(f"**Latest Month:** ₹{monthly_spending['amount'].iloc[-1]:,.0f}")
+            if len(monthly_spending) > 1:
+                prev_month = monthly_spending['amount'].iloc[-2]
+                current_month = monthly_spending['amount'].iloc[-1]
+                change = ((current_month - prev_month) / prev_month * 100) if prev_month > 0 else 0
+                st.write(f"**Change:** {change:+.0f}%")
+            st.write(f"**Average:** ₹{monthly_spending['amount'].mean():,.0f}")
+
+st.markdown("---")
+
 # Row 4: Add Transaction (Simple Form)
 st.subheader("➕ Add Transaction")
 
