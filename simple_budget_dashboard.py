@@ -197,6 +197,99 @@ with col2:
 
 st.markdown("---")
 
+# Row 4.5: Month Selector
+st.subheader("🗓️ Select Month to View Breakdown")
+
+all_txns_for_months = supabase.get_all_transactions()
+if all_txns_for_months:
+    df_for_months = pd.DataFrame(all_txns_for_months)
+    df_for_months['timestamp'] = pd.to_datetime(df_for_months['timestamp'])
+    df_for_months['month'] = df_for_months['timestamp'].dt.to_period('M').astype(str)
+
+    # Get available months
+    available_months = sorted(df_for_months['month'].unique(), reverse=True)
+
+    col1, col2, col3 = st.columns([2, 1, 1])
+
+    with col1:
+        selected_month = st.selectbox(
+            "Choose Month:",
+            available_months,
+            index=0,
+            help="Select a month to see detailed category breakdown"
+        )
+
+    # Get data for selected month
+    selected_month_data = df_for_months[df_for_months['month'] == selected_month]
+
+    if not selected_month_data.empty:
+        selected_spending = {}
+        for category in BUDGET_CONFIG["categories"].keys():
+            amount = selected_month_data[selected_month_data['category'] == category]['amount'].sum()
+            selected_spending[category] = float(amount) if amount > 0 else 0
+
+        selected_total = sum(selected_spending.values())
+
+        with col2:
+            st.metric("Total Spent", f"₹{selected_total:,.0f}")
+
+        with col3:
+            remaining = BUDGET_CONFIG["total_budget"] - selected_total
+            st.metric("Budget Left", f"₹{remaining:,.0f}")
+
+        st.markdown("---")
+
+        # Show breakdown for selected month
+        st.subheader(f"📊 Breakdown for {selected_month}")
+
+        col1, col2 = st.columns([2, 1])
+
+        with col1:
+            # Pie chart for selected month
+            fig_month_pie = go.Figure(data=[go.Pie(
+                labels=list(selected_spending.keys()),
+                values=list(selected_spending.values()),
+                hole=0.3,
+                textposition='inside',
+                textinfo='label+percent'
+            )])
+
+            fig_month_pie.update_layout(
+                height=400,
+                showlegend=True
+            )
+
+            st.plotly_chart(fig_month_pie, use_container_width=True)
+
+        with col2:
+            st.subheader("Category Details")
+
+            # Sort by spending
+            sorted_categories = sorted(selected_spending.items(), key=lambda x: x[1], reverse=True)
+
+            for category, spent in sorted_categories:
+                budget = BUDGET_CONFIG["categories"][category]
+                remaining_cat = budget - spent
+                pct = (spent / budget * 100) if budget > 0 else 0
+
+                # Color code
+                if pct > 100:
+                    color = "🔴"
+                    status = "Over"
+                elif pct > 80:
+                    color = "🟡"
+                    status = "Warning"
+                else:
+                    color = "🟢"
+                    status = "OK"
+
+                st.write(f"{color} **{category}**")
+                st.write(f"  ₹{spent:,.0f} / ₹{budget:,.0f}")
+                st.write(f"  {pct:.0f}% {status}")
+                st.write("")
+
+st.markdown("---")
+
 # Row 5: Month-wise Category Breakdown
 st.subheader("📈 Month-wise Category Breakdown")
 
