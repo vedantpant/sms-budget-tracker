@@ -130,6 +130,33 @@ st.title("💰 Budget Dashboard")
 df, spending = load_current_month_data()
 budget_status = get_budget_status(spending)
 
+# Calculate Income, Expenses, Investments, Savings
+def calculate_income_expenses_breakdown(df):
+    """Calculate income, expenses, investments, and savings"""
+    if df.empty:
+        return {"income": 0, "expenses": 0, "investments": 0, "savings": 0}
+
+    # Income (credits)
+    income = df[df['type'].isin(['Income', 'credit'])]['amount'].sum()
+
+    # Expenses (debits)
+    expenses = df[df['type'].isin(['Expenses', 'debit'])]['amount'].sum()
+
+    # Investments (Stock Portfolio category)
+    investments = df[df['category'] == 'Stock Portfolio']['amount'].sum()
+
+    # Savings = Income - Expenses - Investments
+    savings = income - expenses - investments
+
+    return {
+        "income": float(income) if income > 0 else 0,
+        "expenses": float(expenses) if expenses > 0 else 0,
+        "investments": float(investments) if investments > 0 else 0,
+        "savings": float(savings) if savings > 0 else 0
+    }
+
+breakdown = calculate_income_expenses_breakdown(df)
+
 # Row 1: Key Metrics
 col1, col2, col3, col4 = st.columns(4)
 
@@ -148,6 +175,101 @@ with col3:
 
 with col4:
     st.metric("Remaining", f"₹{remaining:,.0f}", delta=f"₹{savings:,.0f} savings")
+
+st.markdown("---")
+
+# Row 1.5: Income vs Expenses vs Investments vs Savings
+st.subheader("💰 Income Analysis - Current Month")
+
+col1, col2, col3, col4, col5 = st.columns(5)
+
+with col1:
+    st.metric(
+        "💵 Income",
+        f"₹{breakdown['income']:,.0f}",
+        delta="Credited",
+        delta_color="off"
+    )
+
+with col2:
+    st.metric(
+        "💸 Expenses",
+        f"₹{breakdown['expenses']:,.0f}",
+        delta=f"{(breakdown['expenses']/breakdown['income']*100):.0f}% of income",
+        delta_color="inverse"
+    )
+
+with col3:
+    st.metric(
+        "📈 Investments",
+        f"₹{breakdown['investments']:,.0f}",
+        delta=f"{(breakdown['investments']/breakdown['income']*100):.0f}% of income",
+        delta_color="off"
+    )
+
+with col4:
+    st.metric(
+        "🏦 Savings",
+        f"₹{breakdown['savings']:,.0f}",
+        delta=f"{(breakdown['savings']/breakdown['income']*100):.0f}% of income",
+        delta_color="normal"
+    )
+
+with col5:
+    savings_rate = (breakdown['savings'] / breakdown['income'] * 100) if breakdown['income'] > 0 else 0
+    st.metric(
+        "📊 Savings Rate",
+        f"{savings_rate:.0f}%",
+        delta="Target: 35%",
+        delta_color="off"
+    )
+
+# Comparison Chart
+st.markdown("---")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.subheader("📊 Income Distribution")
+
+    # Waterfall chart showing flow
+    fig_waterfall = go.Figure(go.Waterfall(
+        x=['Income', 'Expenses', 'Investments', 'Savings'],
+        y=[breakdown['income'], -breakdown['expenses'], -breakdown['investments'], breakdown['savings']],
+        marker=dict(color=['green', 'red', 'orange', 'blue']),
+        connector=dict(line=dict(color='gray'))
+    ))
+
+    fig_waterfall.update_layout(
+        height=300,
+        showlegend=False,
+        xaxis_title='Category',
+        yaxis_title='Amount (₹)'
+    )
+
+    st.plotly_chart(fig_waterfall, use_container_width=True)
+
+with col2:
+    st.subheader("📈 Breakdown Table")
+
+    breakdown_data = {
+        "Category": ["Income", "Expenses", "Investments", "Savings"],
+        "Amount": [
+            f"₹{breakdown['income']:,.0f}",
+            f"₹{breakdown['expenses']:,.0f}",
+            f"₹{breakdown['investments']:,.0f}",
+            f"₹{breakdown['savings']:,.0f}"
+        ],
+        "% of Income": [
+            "100%",
+            f"{(breakdown['expenses']/breakdown['income']*100):.0f}%",
+            f"{(breakdown['investments']/breakdown['income']*100):.0f}%",
+            f"{(breakdown['savings']/breakdown['income']*100):.0f}%"
+        ]
+    }
+
+    breakdown_df = pd.DataFrame(breakdown_data)
+    st.dataframe(breakdown_df, use_container_width=True, hide_index=True)
 
 st.markdown("---")
 
